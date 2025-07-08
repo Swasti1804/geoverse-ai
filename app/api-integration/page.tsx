@@ -179,51 +179,79 @@ data = response.json()`,
   ]
 
   return (
-    <div className={`min-h-screen ${isDark ? "bg-gray-900" : "bg-white"}`}>
+    <div className={`min-h-screen relative ${isDark ? "bg-black" : "bg-white"}`}>
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 z-0 w-full h-full bg-center bg-cover opacity-20 pointer-events-none"
+        style={{ backgroundImage: "url('/apikey1.jpg')" }}
+        aria-hidden="true"
+      />
       <Navbar />
 
       <EnhancedBackground isDark={isDark} />
 
       <main className="container mx-auto px-4 pt-24 pb-16">
-        <div className="text-center mb-12 sm:mb-16">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-800 dark:text-white mb-4">
+        <div className="text-center mb-12 sm:mb-16 relative">
+          {/* Background image only for heading section */}
+          <div
+            className="absolute inset-0 z-0 w-full h-full bg-center bg-cover opacity-20 pointer-events-none rounded-xl"
+            style={{ backgroundImage: "url('/abcde.jpg')" }}
+            aria-hidden="true"
+          />
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-800 dark:text-white mb-4 relative z-10">
             <Code2 className="inline-block mr-3 h-8 w-8 text-green-600 dark:text-green-400" />
             GeoVerse API Integration
           </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto relative z-10">
             Developer-friendly geospatial intelligence API with comprehensive documentation and examples
           </p>
         </div>
 
         {/* API Key Section */}
         <div className="max-w-4xl mx-auto mb-16">
-          <Card className="bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/20 dark:to-blue-900/20 border-green-200 dark:border-green-800/30">
-            <CardContent className="p-6 sm:p-8 text-center">
-              <Key className="h-16 w-16 mx-auto mb-4 text-green-600 dark:text-green-400" />
-              <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Get Started with API Access</h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-6 max-w-2xl mx-auto">
-                Get your free API key and start integrating GeoVerse's powerful geospatial intelligence into your
-                applications today.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <ApiKeyModal />
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 hover:bg-green-50 dark:hover:bg-green-900/20 bg-transparent"
-                >
-                  <BookOpen className="mr-2 h-5 w-5" />
-                  View Documentation
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="relative rounded-2xl overflow-hidden">
+            {/* Background image for the card */}
+            <div
+              className="absolute inset-0 w-full h-full bg-center bg-cover opacity-60 z-0"
+              style={{ backgroundImage: "url('/abcde.jpg')" }}
+              aria-hidden="true"
+            />
+            {/* Lighter dark overlay for better image visibility */}
+            <div className="absolute inset-0 bg-gray-900/30 z-0" aria-hidden="true" />
+            <Card className="bg-transparent border-green-200 dark:border-green-800/30 relative z-10 shadow-xl">
+              <CardContent className="p-6 sm:p-8 text-center">
+                <Key className="h-16 w-16 mx-auto mb-4 text-green-600 dark:text-green-400" />
+                <h3 className="text-2xl font-bold text-gray-100 dark:text-white mb-4">Get Started with API Access</h3>
+                <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+                  Get your free API key and start integrating GeoVerse's powerful geospatial intelligence into your
+                  applications today.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <ApiKeyModal />
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-green-200 dark:border-green-800 text-green-300 hover:bg-green-900/20 bg-transparent"
+                  >
+                    <BookOpen className="mr-2 h-5 w-5" />
+                    View Documentation
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Code Examples */}
-        <div className="mb-16">
-          <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-8 text-center">Code Examples</h3>
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="mb-16 relative">
+          {/* Background image only for code examples section */}
+          <div
+            className="absolute inset-0 z-0 w-full h-full bg-center bg-cover opacity-20 pointer-events-none rounded-xl"
+            style={{ backgroundImage: "url('/abcde.jpg')" }}
+            aria-hidden="true"
+          />
+          <h3 className="text-2xl font-bold text-gray-800 dark:text-white mb-8 text-center relative z-10">Code Examples</h3>
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 relative z-10">
             {apiExamples.map((example, index) => (
               <Card
                 key={index}

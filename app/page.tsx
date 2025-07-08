@@ -1,8 +1,7 @@
 "use client"
 
-import { useEffect, Suspense, useState } from "react"
+import { useEffect, Suspense, useState, useRef } from "react"
 import Link from "next/link"
-import Spline from "@splinetool/react-spline/next"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
@@ -17,37 +16,36 @@ function EnhancedBackground({ isDark }: { isDark: boolean }) {
     if (!isDark) return // Only show shooting stars in dark mode
 
     const createShootingStar = () => {
-      const colors = ["#ffffff", "#60a5fa", "#8b5cf6", "#06b6d4", "#f59e0b"]
-      const shootingStar = document.createElement("div")
-      shootingStar.className = "shooting-star"
-      shootingStar.style.position = "fixed"
-      shootingStar.style.left = Math.random() * 100 + "%"
-      shootingStar.style.top = Math.random() * 50 + "%"
-      shootingStar.style.width = "2px"
-      shootingStar.style.height = "2px"
-      shootingStar.style.borderRadius = "50%"
-      shootingStar.style.background = colors[Math.floor(Math.random() * colors.length)]
-      shootingStar.style.boxShadow = `0 0 10px ${colors[Math.floor(Math.random() * colors.length)]}`
-      shootingStar.style.zIndex = "1000"
-      shootingStar.style.pointerEvents = "none"
-
-      // Add animation
-      shootingStar.style.animation = "shooting 3s linear forwards"
-
-      document.body.appendChild(shootingStar)
-
-      setTimeout(() => {
-        if (document.body.contains(shootingStar)) {
-          document.body.removeChild(shootingStar)
-        }
-      }, 3000)
+      const color = "#fff"
+      for (let i = 0; i < 2; i++) { // Create two shooting stars at a time
+        const shootingStar = document.createElement("div")
+        shootingStar.className = "shooting-star"
+        shootingStar.style.position = "fixed"
+        shootingStar.style.left = Math.random() * 100 + "%"
+        shootingStar.style.top = Math.random() * 50 + "%"
+        shootingStar.style.width = "3px"
+        shootingStar.style.height = "3px"
+        shootingStar.style.borderRadius = "50%"
+        shootingStar.style.background = color
+        shootingStar.style.boxShadow = `0 0 24px 8px ${color}`
+        shootingStar.style.zIndex = "1000"
+        shootingStar.style.pointerEvents = "none"
+        shootingStar.style.animation = "shooting 2.5s linear forwards"
+        document.body.appendChild(shootingStar)
+        setTimeout(() => {
+          if (document.body.contains(shootingStar)) {
+            document.body.removeChild(shootingStar)
+          }
+        }, 2500)
+      }
     }
 
-    // Create initial shooting star
+    // Create initial shooting stars
+    createShootingStar()
     createShootingStar()
 
-    // Set interval for continuous shooting stars
-    const interval = setInterval(createShootingStar, 2000)
+    // Set interval for continuous shooting stars (less frequent)
+    const interval = setInterval(createShootingStar, 1500)
     return () => clearInterval(interval)
   }, [isDark])
 
@@ -173,7 +171,7 @@ function ExploreModal() {
       <DialogTrigger asChild>
         <Button
           size="lg"
-          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-xl"
+          className="bg-gradient-to-r from-[#2d0036] via-[#3a185a] to-[#1a0026] hover:from-[#3a185a] hover:to-[#2d0036] text-white px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg shadow-xl"
         >
           <Play className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
           Start Exploring
@@ -189,7 +187,7 @@ function ExploreModal() {
           {features.map((feature, index) => (
             <Card
               key={index}
-              className="bg-white/50 dark:bg-white/10 border-white/20 hover:bg-white/60 dark:hover:bg-white/20 transition-all cursor-pointer"
+              className="cosmic-card hover:space-glow transition-all cursor-pointer"
             >
               <CardContent className="p-4 text-center">
                 <feature.icon className="h-8 w-8 mx-auto mb-2 text-blue-600 dark:text-blue-400" />
@@ -221,6 +219,32 @@ function ExploreModal() {
   )
 }
 
+function SplineViewerEmbed() {
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    // Inject the Spline viewer script if not already present
+    if (!document.querySelector('script[src="https://unpkg.com/@splinetool/viewer@1.10.22/build/spline-viewer.js"]')) {
+      const script = document.createElement('script')
+      script.type = 'module'
+      script.src = 'https://unpkg.com/@splinetool/viewer@1.10.22/build/spline-viewer.js'
+      document.body.appendChild(script)
+    }
+    // Inject the spline-viewer element
+    if (ref.current && !ref.current.querySelector('spline-viewer')) {
+      const viewer = document.createElement('spline-viewer')
+      viewer.setAttribute('url', 'https://prod.spline.design/3UzGWg8BpdFpT4XG/scene.splinecode')
+      viewer.style.width = '100%'
+      viewer.style.height = '100%'
+      viewer.style.minHeight = '100%'
+      viewer.style.minWidth = '100%'
+      viewer.style.border = 'none'
+      viewer.style.background = 'transparent'
+      ref.current.appendChild(viewer)
+    }
+  }, [])
+  return <div ref={ref} style={{ width: '100%', height: '100%' }} />
+}
+
 export default function GeoVersePage() {
   const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -235,26 +259,25 @@ export default function GeoVersePage() {
   }
 
   return (
-    <div className={`min-h-screen transition-colors duration-300`}>
+    <div className="min-h-screen transition-colors duration-300 bg-space-gradient">
       <div className={`min-h-screen ${isDark ? "bg-gray-900" : "bg-white"}`}>
         <EnhancedBackground isDark={isDark} />
         <Navbar />
 
         {/* Hero Section */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
-          <div className="absolute inset-0 bg-gradient-to-br from-black/10 dark:from-black/40 via-transparent to-purple-900/5 dark:to-purple-900/30" />
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 bg-black">
+          <div className="absolute inset-0" />
           <div className="container mx-auto px-4 z-10">
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
               <div className="text-center lg:text-left">
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent drop-shadow-lg">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 text-white drop-shadow-lg">
                   GeoVerse
                 </h1>
-                <p className="text-xl sm:text-2xl lg:text-3xl text-gray-800 dark:text-gray-200 mb-3 sm:mb-4 drop-shadow-md">
-                  Explore the Earth, Converse with the Cosmos
+                <p className="text-xl sm:text-2xl lg:text-3xl text-white mb-3 sm:mb-4 drop-shadow-md">
+                Conversational AI for Satellite-Driven Insights.
                 </p>
-                <p className="text-base sm:text-lg text-gray-700 dark:text-gray-300 mb-6 sm:mb-8 max-w-2xl drop-shadow-sm">
-                  Get satellite-derived answers in seconds. GeoVerse bridges human language with space-borne
-                  intelligence.
+                <p className="text-base sm:text-lg text-gray-300 mb-6 sm:mb-8 max-w-2xl drop-shadow-sm">
+                Live access to geospatial insights from ISRO's satellite networks, including weather, ocean, and atmospheric data.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
                   <ExploreModal />
@@ -271,25 +294,10 @@ export default function GeoVersePage() {
                 </div>
               </div>
               <div className="relative h-64 sm:h-80 lg:h-[500px] mt-8 lg:mt-0">
-                <Suspense
-                  fallback={
-                    <div className="flex items-center justify-center h-full text-gray-700 dark:text-white">
-                      Loading 3D Scene...
-                    </div>
-                  }
-                >
-                  <div className="w-full h-full rounded-lg overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 dark:from-gray-800 dark:to-gray-900 shadow-2xl border border-white/20 dark:border-white/10">
-                    <Spline
-                      scene="https://prod.spline.design/abc123/scene.splinecode"
-
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        background: "transparent",
-                      }}
-                    />
-                  </div>
-                </Suspense>
+                {/* Spline Web Viewer Embed */}
+                <div className="w-full h-full rounded-lg overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200 dark:from-gray-800 dark:to-gray-900 shadow-2xl flex items-center justify-center">
+                  <SplineViewerEmbed />
+                </div>
               </div>
             </div>
           </div>
@@ -300,7 +308,7 @@ export default function GeoVersePage() {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Link href="/ai-assistant">
-                <Card className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 transition-all h-full">
+                <Card className="cosmic-card hover:space-glow transition-all h-full">
                   <CardContent className="p-6 text-center">
                     <div className="bg-blue-600/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                       <User className="h-8 w-8 text-blue-400" />
@@ -314,7 +322,7 @@ export default function GeoVersePage() {
                 </Card>
               </Link>
               <Link href="/api-integration">
-                <Card className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 transition-all h-full">
+                <Card className="cosmic-card hover:space-glow transition-all h-full">
                   <CardContent className="p-6 text-center">
                     <div className="bg-green-600/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                       <Globe className="h-8 w-8 text-green-400" />
@@ -328,7 +336,7 @@ export default function GeoVersePage() {
                 </Card>
               </Link>
               <Link href="/dashboard">
-                <Card className="bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20 transition-all h-full">
+                <Card className="cosmic-card hover:space-glow transition-all h-full">
                   <CardContent className="p-6 text-center">
                     <div className="bg-purple-600/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                       <BarChart3 className="h-8 w-8 text-purple-400" />
@@ -354,7 +362,7 @@ export default function GeoVersePage() {
         </section>
 
         {/* Footer */}
-        <footer className="py-8 sm:py-12 border-t border-white/30 dark:border-white/20 bg-white/80 dark:bg-white/5 backdrop-blur-sm">
+        <footer className="py-8 sm:py-12 border-t border-white/30 dark:border-white/20 bg-space-gradient backdrop-blur-sm">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
               <div>
