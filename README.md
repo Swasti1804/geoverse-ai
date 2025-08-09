@@ -1,1 +1,2 @@
 "# geoverse-ai" 
+"# geoverse-frontend" 
